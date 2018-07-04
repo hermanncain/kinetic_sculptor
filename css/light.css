@@ -1,0 +1,167 @@
+button {
+	color: #555;
+	background-color: #ddd;
+	border: 0px;
+	padding: 5px 8px;
+	cursor: pointer;
+	outline: none;
+}
+
+	button:hover {
+		background-color: #fff;
+	}
+
+	button.selected {
+		background-color: #fff;
+	}
+
+input, textarea {
+	border: 1px solid transparent;
+	color: #444;
+}
+
+input.Number {
+	color: #08f!important;
+	font-size: 12px;
+	border: 0px;
+	padding: 2px;
+	cursor: col-resize;
+}
+
+select {
+	color: #666;
+	background-color: #ddd;
+	border: 0px;
+	text-transform: uppercase;
+	cursor: pointer;
+	outline: none;
+}
+
+	select:hover {
+		background-color: #fff;
+	}
+
+/* UI */
+
+#viewport {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width:80%;
+	height:100%;
+}
+
+	#viewport #info {
+		text-shadow: 1px 1px 0 rgba(0,0,0,0.25);
+		pointer-events: none;
+	}
+	
+#sub-viewport {
+	position: absolute;
+	bottom:0;
+	top:75%;
+	left:0;
+	right:30%;
+}
+
+#player {
+	position: absolute;
+	top: 32px;
+	left: 0;
+	right: 300px;
+	bottom: 32px;
+}
+
+#sidebar {
+	position: absolute;
+	right: 0;
+	top: 40%;
+	bottom: 0;
+	width: 20%;
+	background: #eee;
+	overflow: auto;
+}
+
+	#sidebar * {
+		vertical-align: middle;
+	}
+
+	#sidebar .Panel {
+		color: #888;
+		padding: 10px;
+		//border-bottom: 1px solid #ccc;
+	}
+
+	#sidebar .Panel.collapsed {
+		margin-bottom: 0;
+	}
+
+	#sidebar .Row {
+		min-height: 20px;
+		margin-bottom: 10px;
+	}
+
+#tabs {
+	background-color: #ddd;
+	border-top: 1px solid #ccc;
+}
+
+	#tabs span {
+		color: #aaa;
+		border-right: 1px solid #ccc;
+		padding: 10px;
+	}
+
+	#tabs span.selected {
+		color: #888;
+		background-color: #eee;
+	}
+
+#toolbar {
+	position: absolute;
+	left: 0;
+	right: 300px;
+	bottom: 0;
+	height: 32px;
+	background: #eee;
+	color: #333;
+}
+
+	#toolbar * {
+		vertical-align: middle;
+	}
+
+	#toolbar .Panel {
+		padding: 4px;
+		color: #888;
+	}
+
+	#toolbar button {
+		margin-right: 6px;
+	}
+
+#Outliner {
+	color: #444;
+	background-color: #fff;
+	padding: 0;
+	width: 100%;
+	height: 120px;
+	font-size: 12px;
+	cursor: default;
+	overflow: auto;
+	outline: none !important;
+}
+
+	#Outliner .option {
+		padding: 4px;
+		color: #666;
+		white-space: nowrap;
+	}
+
+	#Outliner .option:hover {
+		background-color: rgba(0,0,0,0.02);
+	}
+
+	#Outliner .option.active {
+		background-color: rgba(0,0,0,0.04);
+	}
