@@ -48,19 +48,20 @@
 			
 			// scene
 			scene = new THREE.Scene();
-			scene.background = new THREE.CubeTextureLoader()
+			scene.background = new THREE.Color(0xf8f9fa);
+			/*scene.background = new THREE.CubeTextureLoader()
 				.setPath( 'bg/' )
-				.load( [ 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ] );
+				.load( [ 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ] );*/
 
 			// main camera
 			camera = new THREE.PerspectiveCamera( 90, container.dom.offsetWidth / container.dom.offsetHeight, 1, 10000 );
 			camera.position.set( 0, 0, 200 );
 
 			// lights
-			var directionalLight = new THREE.DirectionalLight( 0xffffff,0.2 );
+			var directionalLight = new THREE.DirectionalLight( 0xffffff,);
 			directionalLight.position.set( 1, 1, 1 );
 			scene.add(directionalLight)
-			scene.add( new THREE.AmbientLight(0xffffff, 0.1));
+			scene.add( new THREE.AmbientLight(0xffffff,0.4));
 
 			// control
 			mousecontrol = new THREE.TrackballControls(camera,container.dom);
@@ -93,10 +94,10 @@
 			/*****************dynamic sculpture********************/
 			
 			// unit
-			var map = new THREE.CubeTextureLoader()
+			/*var map = new THREE.CubeTextureLoader()
 					.setPath( 'bg/' )
-					.load( [ 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ] );
-			var material = new THREE.MeshBasicMaterial( { color: 0xffffff, envMap: map } );
+					.load( [ 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ] );*/
+			var material = new THREE.MeshLambertMaterial( { color: 0xa3adb6/*, envMap: map */} );
 			var plate = new THREE.Mesh(new THREE.CylinderGeometry(5,5,1), material);
 			plate.translateX(20);
 			var bar = new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,20), material);
