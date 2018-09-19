@@ -48,7 +48,7 @@
 			
 			// scene
 			scene = new THREE.Scene();
-			scene.background = new THREE.Color(0xf8f9fa);
+			scene.background = new THREE.Color(0xffffff);
 			/*scene.background = new THREE.CubeTextureLoader()
 				.setPath( 'bg/' )
 				.load( [ 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ] );*/
@@ -58,10 +58,10 @@
 			camera.position.set( 0, 0, 200 );
 
 			// lights
-			var directionalLight = new THREE.DirectionalLight( 0xffffff,);
+			var directionalLight = new THREE.DirectionalLight( 0xffffff,1);
 			directionalLight.position.set( 1, 1, 1 );
 			scene.add(directionalLight)
-			scene.add( new THREE.AmbientLight(0xffffff,0.4));
+			scene.add( new THREE.AmbientLight(0x0));
 
 			// control
 			mousecontrol = new THREE.TrackballControls(camera,container.dom);
@@ -97,7 +97,7 @@
 			/*var map = new THREE.CubeTextureLoader()
 					.setPath( 'bg/' )
 					.load( [ 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ] );*/
-			var material = new THREE.MeshLambertMaterial( { color: 0xa3adb6/*, envMap: map */} );
+			var material = new THREE.MeshStandardMaterial( { color: 0xfcfcfc,emissive:0x7d7d7d,meltaness:0.5/*a3adb6, envMap: map */} );
 			var plate = new THREE.Mesh(new THREE.CylinderGeometry(5,5,1), material);
 			plate.translateX(20);
 			var bar = new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,20), material);
