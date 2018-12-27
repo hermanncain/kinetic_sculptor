@@ -1,4 +1,4 @@
-var TopBar = function (signals) {
+var TopBar = function (sk) {
     var container = new UI.Panel().setId('topbar');
 
     // scene material
@@ -29,12 +29,12 @@ var TopBar = function (signals) {
     var unitMatButtons = [];
     var unitMatRow = new UI.Row();
     container.add(unitMatRow);
-    var t2 = new UI.Text('Unit material').setWidth('80px').setMarginLeft('150px');
+    var t2 = new UI.Text('Unit material').setWidth('80px').setMarginLeft('100px');
     t2.dom.style.verticalAlign='baseline';
     unitMatRow.add(t2);
 
     (function () {
-        for (let name of unitMatNameList) {
+        for (let name of sk.materialNames) {
             var bt = new UI.Button().setId(name).onClick(function(){
                 updateUnitMaterial(name);
             });
@@ -42,52 +42,12 @@ var TopBar = function (signals) {
             unitMatButtons.push(bt);
         }
     }) ();
-    // var defaultMat = new UI.Button('default').onClick(function(){
-    //     updateMaterial('default');
-    // });
-    // defaultMat.dom.classList.add('selected');
-    // unitMaterialRow.add(defaultMat);
-    // var toonMat = new UI.Button('toon').onClick(function(){
-    //     updateMaterial('toon');
-    // });
-    // unitMaterialRow.add(toonMat);
-    // var metalMat = new UI.Button('reflective').onClick(function(){
-    //     updateMaterial('reflective');
-    // });
-    // unitMaterialRow.add(metalMat);
-    // var glassMat = new UI.Button('glass').onClick(function(){
-    //     updateMaterial('glass');
-    // });
-    // unitMaterialRow.add(glassMat);
-    // var customMat = new UI.Button('custom').onClick(function(){
-    //     updateMaterial('custom');
-    // });
-    // unitMaterialRow.add(customMat);
 
-    //var githubRow = new UI.Row();
-    //container.add(githubRow);
-    //var t3 = new UI.Text('learn more at').setWidth('150px').setMargin('5px');//.setFontSize('20px').setMargin('5px');
-    //t3.dom.style.verticalAlign='middle';
-    //githubRow.add(t3);
     container.add(new UI.Button().setId('github').onClick(function(){
 		window.open('https://github.com/hermanncain/kinetic_sculptor');
     }));
     
     //buildSwitchButtons(unitMatList,unitMatLib, currentUnitMat,unitMatRow);
-
-    function updateMaterial(name) {
-        // if (currentAxis == axis) return;
-		// currentAxis = axis;
-		// for (let s of axes) {
-		// 	let axisDom = document.getElementById(s);
-		// 	if (s == currentAxis) {
-		// 		axisDom.classList.add('selected');
-		// 	} else {
-		// 		axisDom.classList.remove('selected');
-		// 	}
-		// }
-		// switchAxis();
-    }
 
     function updateSceneBackground(name) {
         if (scene.background.name == name) {
@@ -95,21 +55,24 @@ var TopBar = function (signals) {
         } else {
             currentSceneBackground = sceneBackgroundLib[name];
             scene.background = currentSceneBackground;
-            unitMatLib['reflective'].envMap = currentSceneBackground;
-            unitMatLib['reflective'].needsUpdate = true;
-            unitMatLib['glass'].envMap = currentSceneBackground;
-            unitMatLib['glass'].needsUpdate = true;
+            console.log(scene.background.name)
+            if (scene.background.name != 'none'){
+                sk.updateMatMap(scene.background);
+            }
             updateUI();
         }
     }
 
     function updateUnitMaterial (name) {
-        //console.log(name, currentUnitMat.name)
-        if (currentUnitMat.name == name) {
+        
+        if (sk.unitMaterial.name == name) {
             return;
         } else {
-            currentUnitMat = unitMatLib[name];
-            console.log(currentUnitMat)
+            sk.setMaterial( name );
+            if (name == 'custom') {
+
+            }
+            updateUI();
         }
     }
     function updateUI () {
@@ -123,8 +86,7 @@ var TopBar = function (signals) {
         }
         // unit material
         for (let b of unitMatButtons) {
-            //console.log(b.dom.id +',' + scene.background.name)
-            if (b.dom.id == currentUnitMat.name) {
+            if (b.dom.id == sk.unitMaterial.name) {
                 b.dom.classList.add('selected');
             } else {
                 b.dom.classList.remove('selected');

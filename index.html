@@ -34,15 +34,6 @@
 			container.setId('viewport');
 			document.body.appendChild( container.dom );
 
-			var Signal = signals.Signal;
-			signals = {
-				sceneBackgroundChanged: new Signal(),
-				unitMaterialChanged: new Signal(),
-				axisChanged: new Signal(),
-				layoutChanged: new Signal(),
-				unitChanged: new Signal()
-			};
-
 			var renderer = new THREE.WebGLRenderer( { antialias: true } );
 			renderer.setClearColor( 0xFAFFFF );
 			renderer.setPixelRatio( window.devicePixelRatio );
@@ -68,28 +59,13 @@
 			};
 			var currentSceneBackground = sceneBackgroundLib[sceneBackgroundNameList[0]];
 
-			// unit materials
-			var mat1 = new THREE.MeshStandardMaterial({color:0x8c8c8c, emessive: 0x202020, roughness:1, metalness:0.5});
-			mat1.name = 'standard';
-			var mat2 = new THREE.MeshToonMaterial({color:0x8c8c8c, specular:0x000000,reflectivity:0, shininess:1 });
-			mat2.name = 'toon';
-			var mat3 = new THREE.MeshBasicMaterial();
-			mat3.name = 'reflective';
-			var mat4 = new THREE.MeshPhongMaterial( { color: 0xccfffd, refractionRatio: 0.985 } );
-			mat4.name = 'glass';
-			var mat5 = new THREE.MeshBasicMaterial();
-			mat5.name = 'custom';
-			var unitMatNameList = ['standard','toon','reflective','glass','custom'];
-			var unitMatLib = {'standard':mat1, 'toon':mat2, 'reflective':mat3, 'glass': mat4, 'custom':mat5};
-			var currentUnitMat = unitMatLib[unitMatNameList[0]];
-
 			// axis shape
-			var axisLib = {
-				'circle': new Element('circle','20,70,z'),
-				'line': new Element('line','1,10,1,0,10,0'),
-				'spiral': new Element('spiral','40,40,1,15,5'),
-				'heart': new Element('heart','30,2'),
-			};
+			// var axisLib = {
+			// 	'circle': new Element('circle','20,70,z'),
+			// 	'line': new Element('line','1,10,1,0,10,0'),
+			// 	'spiral': new Element('spiral','40,40,1,15,5'),
+			// 	'heart': new Element('heart','30,2'),
+			// };
 
 			//
 
@@ -98,33 +74,34 @@
 			objLoader.setPath( 'meshes/' );
 
 			function generateDefaultUnit (mat) {
-				var plate = new THREE.Mesh(new THREE.CylinderGeometry(5,5,1), mat);
-				plate.translateX(20);
+				var plate = new THREE.CylinderGeometry(5,5,1);
+				plate.translate(20,0,0);
 				plate.rotateX(Math.PI/2);
-				var bar = new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,20), mat);
+				var bar = new THREE.CylinderGeometry(0.5,0.5,20);
 				bar.rotateZ(Math.PI/2);
-				bar.translateY(-10);
-				var bear = new THREE.Mesh(new THREE.CylinderGeometry(1,1,2), mat);
-				var unit = new THREE.Group();
-				unit.add(plate,bar,bear);
+				bar.translate(10,0,0);
+				var bear = new THREE.CylinderGeometry(1,1,2);
+				bear.merge(plate);
+				bear.merge(bar);
+				var unit = new THREE.Mesh(bear, mat);
 				unit.name = 'unit';
 				return unit;
 			}
-			var unitList = ['default','10','N1','N3','N4'];
-			var unitLib = {};
-			// load all meshes
-			for (let name of unitList) {
-				if (name=='default') {
-					unitLib[name] = generateDefaultUnit(currentUnitMat);
-					continue;
-				}
-				objLoader.load(name+'.obj',function(object) {
-					object.name = 'unit';
-					object.children[0].material = currentUnitMat;
-					unitLib[name] = object;
-				});
-			}
-			var currentUnit = unitLib[unitList[0]];
+			// var unitNameList = ['default','10','N1','N3','N4'];
+			// var unitLib = {};
+			// // load all meshes
+			// for (let name of unitNameList) {
+			// 	if (name=='default') {
+			// 		unitLib[name] = generateDefaultUnit(currentUnitMat);
+			// 		continue;
+			// 	}
+			// 	objLoader.load(name+'.obj',function(object) {
+			// 		object.name = 'unit';
+			// 		object.children[0].material = currentUnitMat;
+			// 		unitLib[name] = object;
+			// 	});
+			// }
+			// var currentUnit = unitLib[unitNameList[0]];
 
 			// scene
 			var scene = new THREE.Scene();
@@ -155,17 +132,6 @@
 			mousecontrol.panSpeed = 0.8;
 			mousecontrol.staticMoving = true;
 			mousecontrol.dynamicDampingFactor = 0.3;
-
-			// load resources
-			// texture
-			
-
-			// material
-			
-
-			
-				
-			
 			
 			function animate() {
 				
@@ -181,39 +147,24 @@
 			}
 			
 			function render() {
-				if (currentUnitMat.name == 'toon') {
-					console.log('t')
+				if (sk.unitMaterial.name == 'toon') {
 					effect.render( scene, camera );
 				} else {
 					renderer.render( scene, camera );
 				}
 			}
 
+			var sk = new Sculpture(/* signals,axisLib['circle'],unitLib[unitNameList[0]], */new Element('circle','3,0,y'),new Element('incr','0,20,0'));
+
 			// ks
-			var sidebar = new Sidebar(signals);
+			var sidebar = new Sidebar(sk);
 			document.body.appendChild(sidebar.dom);
 
-			var topbar = new TopBar(signals);
+			var topbar = new TopBar(sk);
 			document.body.appendChild(topbar.dom);
 
-			// var sculpture = new THREE.Group();
-			// scene.add(sculpture);
-			// sculpture.core = new Element();
-			// sculpture.add(sculpture.core);
-			// var ksString = []
-			// var strings = 'incr_0,20,0 [ circle_20,70,z [ circle_3,0,y [ e ] ] ]';
-			// //var strings = 'incr_0,20,0 [ heart_30,2 [ circle_3,0,y [ e ] ] ]';
-			// sculpture.core = sculpture.core.fromString(strings);
-
-			var sk = new Sculpture(axisLib['circle'],unitLib[unitList[0]],new Element('circle','3,0,y'),new Element('incr','0,20,0'));
 			scene.add(sk);
 			animate();
-
-			// build sculpture
-			// sculpture.core.find('e').add(currentUnit.clone());
-			// sculpture.core.generate('3');
-			//scene.add( sculpture );
-
 
 			window.addEventListener( 'resize', onWindowResize, false );
 			function onWindowResize() {
@@ -224,7 +175,6 @@
 				renderer.setSize( container.dom.offsetWidth, container.dom.offsetHeight);
 				
 				mousecontrol.handleResize();
-				//render();
 
 			}
 

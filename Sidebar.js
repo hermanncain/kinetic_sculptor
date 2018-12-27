@@ -1,4 +1,4 @@
-var Sidebar = function ( ) {
+var Sidebar = function ( sk ) {
 
 	var container = new UI.Panel();
 	container.setId('sidebar');
@@ -144,25 +144,37 @@ var Sidebar = function ( ) {
 	container.add(new UI.HorizontalRule());
 
 	// unit shape
+	
 	var units = [0,1,2,3];
 	var currentUnit = 0;
 
+	var unitShapeButtons = [];
 	var unitShapePanel = new UI.Panel();
 	unitShapePanel.add(new UI.Text('Unit shape').setFontSize('20px'));
 	container.add(unitShapePanel);
 
 	var unitShapeRow = new UI.Row();
-	container.add(unitShapeRow);
+	unitShapePanel.add(unitShapeRow);
 
-	for (let i=0;i<units.length;i++) {
-		var unitButton = new UI.Button().setId('unit-'+i).onClick(function(){
-			updateUnit(i);
-		});
-		unitShapeRow.add(unitButton);
-		if (i==0) {
-			unitButton.dom.classList.add('selected');
-		}
-	}
+	(function () {
+        for (let name of sk.unitNames) {
+            var bt = new UI.Button().setId(name).onClick(function(){
+                updateUnit(name);
+            });
+            unitShapeRow.add(bt);
+            unitShapeButtons.push(bt);
+        }
+	}) ();
+	
+	// for (let i=0;i<units.length;i++) {
+	// 	var unitButton = new UI.Button().setId('unit-'+i).onClick(function(){
+	// 		updateUnit(i);
+	// 	});
+	// 	unitShapeRow.add(unitButton);
+	// 	if (i==0) {
+	// 		unitButton.dom.classList.add('selected');
+	// 	}
+	// }
 	
 
 	// unit material
@@ -301,9 +313,9 @@ var Sidebar = function ( ) {
 		switchAxis();
 	}
 
-	function updateUnit(idx) {
-		if (currentUnit == idx) return;
-		currentUnit = idx;
+	function updateUnit(name) {
+		if (currentUnit == name) return;
+		currentUnit = name;
 		for (let i of units) {
 			let unitDom = document.getElementById('unit-'+i);
 			if (i == currentUnit) {
@@ -312,10 +324,10 @@ var Sidebar = function ( ) {
 				unitDom.classList.remove('selected');
 			}
 		}
-		switchUnit(idx);
+		switchUnit(name);
 	}
 
-	function switchUnit(idx) {
+	function switchUnit(name) {
 
 	}
 
@@ -363,7 +375,5 @@ function updateSwitchButtons(clickName, objectMap, currentObject, nameList) {
 			btDom.classList.remove('selected');
 		}
 	}
-	// update object
 	
-	//switchUnit(idx);
 }
