@@ -1111,3 +1111,13 @@ UI.Browser.prototype.setValue = function ( value ) {
 	return this;
 
 };
+
+// UI.RadioButtons = function (names) {
+// 	UI.Element.call( this );
+// }
+
+// UI.RadioButtons.prototype = Object.assign(Object.create(UI.Element.prototype), {
+
+// 	constructor: UI.RadioButtons,
+
+// });

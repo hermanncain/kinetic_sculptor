@@ -41,21 +41,21 @@ Element.prototype = Object.assign(Object.create(THREE.Object3D.prototype), {
 		
 	},
 	
-	getLeaves: function (){
+	// getLeaves: function (){
 		
-		var scope = this;
+	// 	var scope = this;
 		
-		if(this.key.indexOf('e')==0&&this.key.length<4) this.parent.leaves.push(this);
-		if(this.left) {
-			this.left.getLeaves();
-			if(this.left.leaves.length>0) this.left.leaves.map(function(e){scope.leaves.push(e);});
-		}
-		if(this.right) {
-			this.right.getLeaves();
-			if(this.right.leaves.length>0) this.right.leaves.map(function(e){scope.leaves.push(e);});
-		}
+	// 	if(this.key.indexOf('e')==0&&this.key.length<4) this.parent.leaves.push(this);
+	// 	if(this.left) {
+	// 		this.left.getLeaves();
+	// 		if(this.left.leaves.length>0) this.left.leaves.map(function(e){scope.leaves.push(e);});
+	// 	}
+	// 	if(this.right) {
+	// 		this.right.getLeaves();
+	// 		if(this.right.leaves.length>0) this.right.leaves.map(function(e){scope.leaves.push(e);});
+	// 	}
 		
-	},
+	// },
 	
 	find: function (k) {
 		
@@ -95,198 +95,128 @@ Element.prototype = Object.assign(Object.create(THREE.Object3D.prototype), {
 			
 		}
 		
-		var args = this.val.split( ',' ).map( function ( i ) { return d.exec(i)?Number( i ):i;} );
-		
-		if (type == '2') {//2d
-			
-			if ( v1.indexOf(this.key) >=0 ){// v21: const wordlist of valence == 1
-				
-				switch(this.key){
-					case 't':
-						translate(this,args[0],args[1]);
-						break;
-					case 'r':
-						rotate(this,args[0]);
-						break;
-					case 'm':
-						mirror(this,args[0]);
-						break;
-					case 'circle':
-						circle(this,args[0],args[1]);
-						break;
-					case 'linear':
-						linear(this,args[0],args[1],args[2],args[3]);
-						break;
-					case 'spiral':
-						spiral(this,args[0],args[1],args[2]);;
-						break;
-					case 'quadra':
-						quadra(this,args[0],args[1]);
-						break;
-					case 'rlock':
-						rlock(this,args[0]);
-						break;
-					case 'incs':
-						incs(this,args[0]);
-						break;
-
-				}
-				
-			} else if ( v2.indexOf(this.key) >=0 ){// v22: const wordlist of valence == 2
-				if( this.right == null ) {alert('missing object!'); return;}
-								
-				switch(this.key) {
-					
-					case 'symmetry':
-						symmetry(this,args[0],args[1],args[2]);
-						break;
-					case 'surround':
-						surround(this,args[0],args[1],args[2]);
-						break;
-					case 'adhere':
-						adhere(this);
-						break;
-					
-				}
-				
-			} else {alert('invalid key!');return;}
-				
-		} else if (type == '3') {//3d
-			
-			if ( v1.indexOf(this.key) >=0 ){// v21: const wordlist of valence == 1
+		var args = this.val.split( ',' ).map( function ( i ) {
+			var str2num = Number( i );
+			if (isNaN(str2num)) return i;
+			else return str2num;
+			//return d.exec(i)?Number( i ):i;
+		} );
+		//console.log(args)
+			//if ( v1.indexOf(this.key) >=0 ){// v21: const wordlist of valence == 1
 
 				if( this.val == null ) return;
 								
 				switch(this.key){
-					case 't':
-						translate3(this,args[0],args[1],args[2])
-					case 'r':
-						rotate3(this,args[0],args[1],args[2]);
-						break;
-					case 's':
-						scale3(this,args[0],args[1],args[2]);
-						break;
-					case 'mirror':
-						mirror(this,args[0]);
-						break;
 					case 'circle':
 						circle(this,args[0],args[1],args[2]);
-						break;
-					case 'arc':
-						arc(this,args[0],args[1],args[2]);
-						break;						
-					case 'linear':
-						linear3(this,args[0],args[1],args[2],args[3],args[4],args[5]);
+						break;					
+					case 'line':
+						line(this,args[0],args[1],args[2],args[3],args[4],args[5]);
 						break;
 					case 'spiral':
-						spiral3(this,args[0],args[1],args[2],args[3],args[4]);;
+						spiral(this,args[0],args[1],args[2],args[3],args[4]);;
 						break;
 					case 'incr':
 						if(this.left.key == 'incs')
-							incr3(this.left,args[0],args[1],args[2],args[3]);
-						else incr3(this,args[0],args[1],args[2],args[3]);
+							incr(this.left,args[0],args[1],args[2],args[3]);
+						else incr(this,args[0],args[1],args[2],args[3]);
 						break;
 					case 'incs':
 						if(this.left.key == 'incr')
-							incs3(this.left,args[0],args[1],args[2]);
-						else incs3(this,args[0],args[1],args[2]);
-						break;
-					case 'octa':
-						octa(this,args[0],args[1],args[2]);
+							incs(this.left,args[0],args[1],args[2]);
+						else incs(this,args[0],args[1],args[2]);
 						break;
 					case 'heart':
 						heart(this,args[0],args[1],args[2]);
 						break;
 				}
 				
-			} else if ( v2.indexOf(this.key) >=0 ){// v32: const wordlist of valence == 2
-				if( this.right == null ) {alert('missing object!'); return;}
+			// } else if ( v2.indexOf(this.key) >=0 ){// v32: const wordlist of valence == 2
+			// 	if( this.right == null ) {alert('missing object!'); return;}
 								
-				switch(this.key) {
-					case 'rpos':
-						translate3(this,args[0],args[1],args[2]);
-						break;
-					case 'surround':
-						surround(this,args[0],args[1],args[2]);
-						break;
-				}
+			// 	switch(this.key) {
+			// 		case 'rpos':
+			// 			translate3(this,args[0],args[1],args[2]);
+			// 			break;
+			// 		case 'surround':
+			// 			surround(this,args[0],args[1],args[2]);
+			// 			break;
+			// 	}
 				
-			} else {alert('invalid key!');return;}
-			
-		}
+			//} else {alert('invalid key!');return;}
 
 	},
 	
-	calcDepth: function () {
+	// calcDepth: function () {
 		
-		var tdepth = 0;
-		var q = [];
-		q.push( this );
+	// 	var tdepth = 0;
+	// 	var q = [];
+	// 	q.push( this );
 		
-		while( q.length != 0 ) {
+	// 	while( q.length != 0 ) {
 			
-			var p = q.shift();//remove and return q[0]
+	// 		var p = q.shift();//remove and return q[0]
 			
-			if( p.left ) {
-				q.push( p.left );
-				tdepth = p.depth+1;
-				p.left.depth = tdepth;
-			}
-			if( p.right ) {
-				q.push( p.right );
-				tdepth = p.depth+1;
-				p.right.depth = tdepth;
-			}
+	// 		if( p.left ) {
+	// 			q.push( p.left );
+	// 			tdepth = p.depth+1;
+	// 			p.left.depth = tdepth;
+	// 		}
+	// 		if( p.right ) {
+	// 			q.push( p.right );
+	// 			tdepth = p.depth+1;
+	// 			p.right.depth = tdepth;
+	// 		}
 			
-		}
-		return tdepth;
+	// 	}
+	// 	return tdepth;
 
-	},
+	// },
 	
-	parseHierarchies: function () {
+	// parseHierarchies: function () {
 		
-		var dep = this.calcDepth();
-		var r = [];
-		for (var i=0;i<dep+1;i++) r.push([]);
-		r[0].push(this.toStr());
-		var q = [];
-		q.push( this );
+	// 	var dep = this.calcDepth();
+	// 	var r = [];
+	// 	for (var i=0;i<dep+1;i++) r.push([]);
+	// 	r[0].push(this.toStr());
+	// 	var q = [];
+	// 	q.push( this );
 		
-		while( q.length != 0 ) {
+	// 	while( q.length != 0 ) {
 			
-			var ri = [];
+	// 		var ri = [];
 
-			var p = q.shift();
+	// 		var p = q.shift();
 			
-			if( p.left ) {
+	// 		if( p.left ) {
 				
-				var str = '[ ';
-				str+=p.left.toStr();
-				q.push( p.left );
-				//ri.push(new Element(p.left.key,p.left.val,p.left.mar));
-				ri.unshift(p.left.depth);
+	// 			var str = '[ ';
+	// 			str+=p.left.toStr();
+	// 			q.push( p.left );
+	// 			//ri.push(new Element(p.left.key,p.left.val,p.left.mar));
+	// 			ri.unshift(p.left.depth);
 			
-				if( p.right ) {
-					str += ' ';
-					str += p.right.toStr();
-					str += ' ]';
-					q.push( p.right );
-					//ri.push(new Element(p.right.key,p.right.val,p.right.mar));
-				} else {
-					str += ' ]';
+	// 			if( p.right ) {
+	// 				str += ' ';
+	// 				str += p.right.toStr();
+	// 				str += ' ]';
+	// 				q.push( p.right );
+	// 				//ri.push(new Element(p.right.key,p.right.val,p.right.mar));
+	// 			} else {
+	// 				str += ' ]';
 					
-				}
-				if(str!='[ ') ri.push(str);
-			}
-			if(ri.length>0){
-				var n = ri.shift();
-				for( e of ri ) r[n].push(e);
+	// 			}
+	// 			if(str!='[ ') ri.push(str);
+	// 		}
+	// 		if(ri.length>0){
+	// 			var n = ri.shift();
+	// 			for( e of ri ) r[n].push(e);
 
-			}
-		}
+	// 		}
+	// 	}
 
-		return r;
-	},	
+	// 	return r;
+	// },
 
 	toJSON: function () {
 		
@@ -308,50 +238,50 @@ Element.prototype = Object.assign(Object.create(THREE.Object3D.prototype), {
 		
 	},
 	
-	toStr: function (){//node
+	// toStr: function (){//node
 		
-		var r = this.key;
-		r = this.val? r+'_'+this.val:r;
-		r = this.mar? r+'_'+this.mar:r;
-		return r;
+	// 	var r = this.key;
+	// 	r = this.val? r+'_'+this.val:r;
+	// 	r = this.mar? r+'_'+this.mar:r;
+	// 	return r;
 
-	},
+	// },
 	
-	toStrMin: function () {//to set of min trees
+	// toStrMin: function () {//to set of min trees
 		
-		var arr = [];
-		var q = [];
-		q.push( this );
+	// 	var arr = [];
+	// 	var q = [];
+	// 	q.push( this );
 		
-		while( q.length != 0 ) {
+	// 	while( q.length != 0 ) {
 			
-			var str0 = q[0].toStr();
-			var p = q.shift();//remove and return q[0]
+	// 		var str0 = q[0].toStr();
+	// 		var p = q.shift();//remove and return q[0]
 			
-			if( p.left ) {
+	// 		if( p.left ) {
 				
-				var str = ' [ ';
-				str+=p.left.toStr();
-				q.push( p.left );
+	// 			var str = ' [ ';
+	// 			str+=p.left.toStr();
+	// 			q.push( p.left );
 			
-				if( p.right ) {
-					str += ' ';
-					str += p.right.toStr();
-					str += ' ]';
-					q.push( p.right );
+	// 			if( p.right ) {
+	// 				str += ' ';
+	// 				str += p.right.toStr();
+	// 				str += ' ]';
+	// 				q.push( p.right );
 
-				} else {
-					str += ' ]';
+	// 			} else {
+	// 				str += ' ]';
 					
-				}
+	// 			}
 				
-				if(str!='[ ') arr.push(str0+str);
-			}
+	// 			if(str!='[ ') arr.push(str0+str);
+	// 		}
 			
-		}
-		return arr;
+	// 	}
+	// 	return arr;
 		
-	},
+	// },
 	
 	toString: function (keyonly) {//tree
 		
