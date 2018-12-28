@@ -953,27 +953,29 @@ UI.Modal = function ( value ) {
 	var scope = this;
 
 	var dom = document.createElement( 'div' );
+	dom.className = 'Modal';
 
+	dom.style.top = '0';
 	dom.style.position = 'absolute';
 	dom.style.width = '100%';
 	dom.style.height = '100%';
 	dom.style.backgroundColor = 'rgba(0,0,0,0.5)';
-	dom.style.display = 'none';
+	//dom.style.display = 'none';
 	dom.style.alignItems = 'center';
 	dom.style.justifyContent = 'center';
-	dom.addEventListener( 'click', function ( event ) {
+	// dom.addEventListener( 'click', function ( event ) {
 
-		scope.hide();
+	// 	scope.hide();
 
-	} );
+	// } );
 
 	this.dom = dom;
 
 	this.container = new UI.Panel();
-	this.container.dom.style.width = '200px';
-	this.container.dom.style.padding = '20px';
-	this.container.dom.style.backgroundColor = '#ffffff';
-	this.container.dom.style.boxShadow = '0px 5px 10px rgba(0,0,0,0.5)';
+	// this.container.dom.style.width = '200px';
+	// this.container.dom.style.padding = '20px';
+	// this.container.dom.style.backgroundColor = '#ffffff';
+	// this.container.dom.style.boxShadow = '0px 5px 10px rgba(0,0,0,0.5)';
 
 	this.add( this.container );
 
@@ -986,8 +988,8 @@ UI.Modal.prototype.constructor = UI.Modal;
 
 UI.Modal.prototype.show = function ( content ) {
 
-	this.container.clear();
-	this.container.add( content );
+	// this.container.clear();
+	// this.container.add( content );
 
 	this.dom.style.display = 'flex';
 
@@ -1003,121 +1005,170 @@ UI.Modal.prototype.hide = function () {
 
 };
 
-// Browser
-
-UI.Browser = function ( ) {
+// upload texture
+UI.Texture = function ( mapping ) {
 
 	UI.Element.call( this );
 
 	var scope = this;
 
-	var dom = document.createElement( 'div' );
-	dom.className = 'Browser';
+	var dom = document.createElement( 'span' );
+
+	var form = document.createElement( 'form' );
+
+	var input = document.createElement( 'input' );
+	input.type = 'file';
+	input.addEventListener( 'change', function ( event ) {
+
+		loadFile( event.target.files[ 0 ] );
+
+	} );
+	form.appendChild( input );
+
+	var canvas = document.createElement( 'canvas' );
+	canvas.width = 40;
+	canvas.height = 40;
+	canvas.style.cursor = 'pointer';
+	//canvas.style.margin = '5px';
+	canvas.style.border = '1px solid #888';
+	canvas.addEventListener( 'click', function ( event ) {
+
+		input.click();
+
+	}, false );
+	canvas.addEventListener( 'drop', function ( event ) {
+
+		event.preventDefault();
+		event.stopPropagation();
+		loadFile( event.dataTransfer.files[ 0 ] );
+
+	}, false );
+	dom.appendChild( canvas );
+
+	// var name = document.createElement( 'input' );
+	// name.disabled = true;
+	// name.style.width = '64px';
+	// name.style.border = '1px solid #ccc';
+	// dom.appendChild( name );
+
+	function loadFile( file ) {
+
+		if ( file.type.match( 'image.*' ) ) {
+
+			var reader = new FileReader();
+
+			if ( file.type === 'image/targa' ) {
+
+				reader.addEventListener( 'load', function ( event ) {
+
+					var canvas = new THREE.TGALoader().parse( event.target.result );
+
+					var texture = new THREE.CanvasTexture( canvas, mapping );
+					texture.sourceFile = file.name;
+
+					scope.setValue( texture );
+
+					if ( scope.onChangeCallback ) scope.onChangeCallback();
+
+				}, false );
+
+				reader.readAsArrayBuffer( file );
+
+			} else {
+
+				reader.addEventListener( 'load', function ( event ) {
+
+					var image = document.createElement( 'img' );
+					image.addEventListener( 'load', function( event ) {
+
+						var texture = new THREE.Texture( this, mapping );
+						texture.sourceFile = file.name;
+						texture.format = file.type === 'image/jpeg' ? THREE.RGBFormat : THREE.RGBAFormat;
+						texture.needsUpdate = true;
+
+						scope.setValue( texture );
+
+						if ( scope.onChangeCallback ) scope.onChangeCallback();
+
+					}, false );
+
+					image.src = event.target.result;
+
+				}, false );
+
+				reader.readAsDataURL( file );
+
+			}
+
+		}
+
+		form.reset();
+
+	}
 
 	this.dom = dom;
-
-	this.options = [];
-	this.selectedIndex = - 1;
-	this.selectedValue = null;
+	this.texture = null;
+	this.onChangeCallback = null;
 
 	return this;
 
 };
 
-UI.Browser.prototype = Object.create( UI.Element.prototype );
-UI.Browser.prototype.constructor = UI.Browser;
+UI.Texture.prototype = Object.create( UI.Element.prototype );
+UI.Texture.prototype.constructor = UI.Texture;
 
-UI.Browser.prototype.selectIndex = function ( index ) {
+UI.Texture.prototype.getValue = function () {
 
-	if ( index >= 0 && index < this.options.length ) {
-
-		this.setValue( this.options[ index ].value );
-
-		var changeEvent = document.createEvent( 'HTMLEvents' );
-		changeEvent.initEvent( 'change', true, true );
-		this.dom.dispatchEvent( changeEvent );
-
-	}
+	return this.texture;
 
 };
 
-UI.Browser.prototype.setOptions = function ( options ) {
+UI.Texture.prototype.setValue = function ( texture ) {
 
-	var scope = this;
+	var canvas = this.dom.children[ 0 ];
+	// var name = this.dom.children[ 1 ];
+	var context = canvas.getContext( '2d' );
 
-	while ( scope.dom.children.length > 0 ) {
+	if ( texture !== null ) {
 
-		scope.dom.removeChild( scope.dom.firstChild );
+		var image = texture.image;
 
-	}
+		if ( image !== undefined && image.width > 0 ) {
 
-	function onClick() {
+			// name.value = texture.sourceFile;
 
-		scope.setValue( this.value );
-
-		var changeEvent = document.createEvent( 'HTMLEvents' );
-		changeEvent.initEvent( 'change', true, true );
-		scope.dom.dispatchEvent( changeEvent );
-
-	}
-
-	//
-
-	scope.options = [];
-
-	for ( var i = 0; i < options.length; i ++ ) {
-
-		var div = options[ i ];
-		div.className = 'option';
-		scope.dom.appendChild( div );
-
-		scope.options.push( div );
-
-		div.addEventListener( 'click', onClick, false );
-
-	}
-
-	return scope;
-
-};
-
-UI.Browser.prototype.getValue = function () {
-
-	return this.selectedValue;
-
-};
-
-UI.Browser.prototype.setValue = function ( value ) {
-
-	for ( var i = 0; i < this.options.length; i ++ ) {
-
-		var element = this.options[ i ];
-
-		if ( element.value === value ) {
-
-			element.classList.add( 'active' );
-			this.selectedIndex = i;
+			var scale = canvas.width / image.width;
+			context.drawImage( image, 0, 0, image.width * scale, image.height * scale );
 
 		} else {
 
-			element.classList.remove( 'active' );
+			// name.value = texture.sourceFile + ' (error)';
+			context.clearRect( 0, 0, canvas.width, canvas.height );
+
+		}
+
+	} else {
+
+		// name.value = '';
+
+		if ( context !== null ) {
+
+			// Seems like context can be null if the canvas is not visible
+
+			context.clearRect( 0, 0, canvas.width, canvas.height );
 
 		}
 
 	}
 
-	this.selectedValue = value;
+	this.texture = texture;
+
+};
+
+UI.Texture.prototype.onChange = function ( callback ) {
+
+	this.onChangeCallback = callback;
 
 	return this;
 
 };
-
-// UI.RadioButtons = function (names) {
-// 	UI.Element.call( this );
-// }
-
-// UI.RadioButtons.prototype = Object.assign(Object.create(UI.Element.prototype), {
-
-// 	constructor: UI.RadioButtons,
-
-// });

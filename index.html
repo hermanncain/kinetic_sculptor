@@ -11,6 +11,7 @@
 		<script src="utils/OBJLoader.js"></script>
 		<script src="Topbar.js"></script>
 		<script src="Sidebar.js"></script>
+		<script src="loading.js"></script>
 	</head>
 	<body>
 		<link href="css/main.css" rel="stylesheet" />
@@ -53,16 +54,6 @@
 			};
 			var currentSceneBackground = sceneBackgroundLib[sceneBackgroundNameList[0]];
 
-			// axis shape
-			// var axisLib = {
-			// 	'circle': new Element('circle','20,70,z'),
-			// 	'line': new Element('line','1,10,1,0,10,0'),
-			// 	'spiral': new Element('spiral','40,40,1,15,5'),
-			// 	'heart': new Element('heart','30,2'),
-			// };
-
-			//
-
 			// unit shape
 			var objLoader = new THREE.OBJLoader();
 			objLoader.setPath( 'meshes/' );
@@ -81,21 +72,6 @@
 				unit.name = 'unit';
 				return unit;
 			}
-			// var unitNameList = ['default','10','N1','N3','N4'];
-			// var unitLib = {};
-			// // load all meshes
-			// for (let name of unitNameList) {
-			// 	if (name=='default') {
-			// 		unitLib[name] = generateDefaultUnit(currentUnitMat);
-			// 		continue;
-			// 	}
-			// 	objLoader.load(name+'.obj',function(object) {
-			// 		object.name = 'unit';
-			// 		object.children[0].material = currentUnitMat;
-			// 		unitLib[name] = object;
-			// 	});
-			// }
-			// var currentUnit = unitLib[unitNameList[0]];
 
 			// scene
 			var scene = new THREE.Scene();
@@ -148,9 +124,9 @@
 				}
 			}
 
-			var sk = new Sculpture(/* signals,axisLib['circle'],unitLib[unitNameList[0]], */new Element('circle','3,0,y'),new Element('incr','0,20,0'));
-
 			// ks
+			var sk = new Sculpture(new Element('circle','3,0,y'),new Element('incr','0,20,0'));
+			
 			var sidebar = new Sidebar(sk);
 			document.body.appendChild(sidebar.dom);
 

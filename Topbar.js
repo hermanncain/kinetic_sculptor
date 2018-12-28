@@ -1,6 +1,12 @@
 var TopBar = function (sk) {
     var container = new UI.Panel().setId('topbar');
 
+    var title = new UI.Text('KSBuilder').setWidth('180px').setFontSize('40px')
+    title.setMarginLeft('20px').setMarginTop('5px');
+    title.dom.style.verticalAlign='top';
+    title.dom.style.fontFamily='Impact';
+    container.add(title);
+
     // scene material
     var sceneBackgroundButtons = [];
     var sceneRow = new UI.Row();
@@ -37,6 +43,12 @@ var TopBar = function (sk) {
         }
     }) ();
 
+    var uploadTexture = new UI.Texture().setDisplay('none').onChange(function(texture){
+        sk.materials['custom'].map = uploadTexture.getValue();
+        sk.materials['custom'].needsUpdate = true;
+    });
+    unitMatRow.add(uploadTexture);
+
     container.add(new UI.Button().setId('github').onClick(function(){
 		window.open('https://github.com/hermanncain/kinetic_sculptor');
     }));
@@ -61,7 +73,9 @@ var TopBar = function (sk) {
         } else {
             sk.setMaterial( name );
             if (name == 'custom') {
-
+                uploadTexture.setDisplay('');
+            } else {
+                uploadTexture.setDisplay('none');
             }
             updateUI();
         }

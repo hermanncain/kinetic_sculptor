@@ -63,41 +63,41 @@ var Sidebar = function ( sk ) {
 
 	// circle
 	var RadiusDiv = new UI.Panel();
-	RadiusDiv.add(new UI.Text('Radius').setWidth('100px'));
+	RadiusDiv.add(new UI.Text('Radius').setWidth('40%'));
 	axisParaPanel.add(RadiusDiv);
-	var RadiusCtrl = new UI.Number().setPaddingLeft('20px').setRange(0,200).onChange(updateRadius);
+	var RadiusCtrl = new UI.Number().setRange(0,200).onChange(updateRadius);
 	RadiusDiv.add(RadiusCtrl);
 
 	// line
 	var yNumberDiv = new UI.Panel();
-	yNumberDiv.add(new UI.Text('#').setWidth('100px'));
+	yNumberDiv.add(new UI.Text('#').setWidth('40%'));
 	axisParaPanel.add(yNumberDiv);
-	var yNumberCtrl = new UI.Number().setPaddingLeft('20px').setRange(1,50).onChange(updateYNumber);
+	var yNumberCtrl = new UI.Number().setRange(1,50).onChange(updateYNumber);
 	yNumberDiv.add(yNumberCtrl);
 
 
 	// spiral
 	var spiralDiv = new UI.Panel().setDisplay('none');
-	spiralDiv.add(new UI.Text('r').setWidth('100px'));
-	var spr1 = new UI.Number(40).setPaddingLeft('20px').setRange(5,100).onChange(updateSp);
+	spiralDiv.add(new UI.Text('r').setWidth('40%'));
+	var spr1 = new UI.Number().setRange(5,100).onChange(updateSp);
 	spiralDiv.add(spr1);
-	spiralDiv.add(new UI.Text('Δr').setWidth('100px'));
-	var spdr = new UI.Number().setPaddingLeft('20px').setRange(-10,10).onChange(updateSp);
+	spiralDiv.add(new UI.Text('Δr').setWidth('40%'));
+	var spdr = new UI.Number().setRange(-10,10).onChange(updateSp);
 	spiralDiv.add(spdr);
-	spiralDiv.add(new UI.Text('Δθ').setWidth('100px'));
-	var spdt = new UI.Number().setPaddingLeft('20px').setRange(5,90).onChange(updateSp);
+	spiralDiv.add(new UI.Text('Δθ').setWidth('40%'));
+	var spdt = new UI.Number().setRange(5,90).onChange(updateSp);
 	spiralDiv.add(spdt);
-	spiralDiv.add(new UI.Text('Pitch').setWidth('100px'));
-	var spa = new UI.Number().setPaddingLeft('20px').setRange(-50,50).onChange(updateSp);
+	spiralDiv.add(new UI.Text('Pitch').setWidth('40%'));
+	var spa = new UI.Number().setRange(-50,50).onChange(updateSp);
 	spiralDiv.add(spa);
 	axisParaPanel.add(spiralDiv);
 
 	// heart
 	var scaleDiv = new UI.Panel().setDisplay('none');
-	scaleDiv.add(new UI.Text('Scale').setWidth('100px'));
-	var scaleCtrl = new UI.Number().setPaddingLeft('20px').setRange(0.5,10).onChange(updateHeart);
+	scaleDiv.add(new UI.Text('Scale').setWidth('40%'));
+	var scaleCtrl = new UI.Number().setRange(0.5,10).onChange(updateHeart);
 	scaleDiv.add(scaleCtrl);
-	scaleDiv.add(new UI.Text('Angle lock').setWidth('120px'));
+	scaleDiv.add(new UI.Text('Angle lock').setWidth('50%'));
 	var rlock = new UI.Checkbox(false).onChange(updateHeart);
 	scaleDiv.add(rlock);
 
@@ -116,13 +116,29 @@ var Sidebar = function ( sk ) {
 
 	(function () {
         for (let name of sk.unitNames) {
-            var bt = new UI.Button(name.slice(0,3)).setId(name).onClick(function(){
+            var bt = new UI.Button(name=='upload'?'':name.slice(0,3)).setId(name).onClick(function(){
                 updateUnit(name);
             });
             unitRow.add(bt);
             unitButtons.push(bt);
         }
 	}) ();
+
+	// upload unit
+	var uploadRow = new UI.Row();
+	unitPanel.add(uploadRow);
+	var uploadUnit = document.createElement( 'input' );
+	uploadUnit.style.width = '100%';
+	uploadUnit.style.display = 'none';
+	uploadUnit.id = 'uploadUnit';
+	uploadUnit.multiple = false;
+	uploadUnit.type = 'file';
+	uploadUnit.accept = '.obj';
+	uploadUnit.addEventListener( 'change', function ( event ) {
+		if(uploadUnit.files.length>0)
+			loadFile(uploadUnit.files[0] );
+	} );
+	uploadRow.dom.appendChild( uploadUnit );
 
 	// Update objects
 	// update layouts
@@ -167,10 +183,54 @@ var Sidebar = function ( sk ) {
 
 	// update unit
 	function updateUnit(name) {
-		if (sk.unit.unitName == name) return;
-		sk.setUnit(name);
-		sk.build();
-		updateUnitUI();
+		if (sk.unit.unitName == name) {
+			if (sk.units['upload']==undefined) {
+				updateUnitUI();
+			} else {
+				return;
+			}
+		}
+		if (name!='upload') {
+			uploadUnit.style.display = 'none';
+			sk.setUnit(name);
+			sk.build();
+			updateUnitUI();
+		} else {
+			uploadUnit.style.display = '';
+			if(sk.units[name]!==undefined) {
+				sk.setUnit(name);
+				sk.build();
+				updateUnitUI();
+			} else {
+				for (let b of unitButtons) {
+					if (b.dom.id == 'upload') {
+						b.dom.classList.add('selected');
+					} else {
+						b.dom.classList.remove('selected');
+					}
+				}
+			}
+		}
+	}
+
+	// upload .obj file
+	function loadFile(file) {
+		var reader = new FileReader();
+		reader.addEventListener('load', function (event) {
+			var contents = event.target.result;
+			var object = objLoader.parse(contents);
+			object.traverse(function(obj){
+				if(obj.type=='Mesh')
+					obj.material = sk.unit.material;
+			});
+			object.name = 'unit';
+			object.unitName = 'upload';
+			sk.units['upload'] = object;
+			sk.setUnit('upload');
+			sk.build();
+			updateUnitUI();
+		});
+		reader.readAsText(file);
 	}
 
 	// Update UIs
@@ -262,36 +322,3 @@ var Sidebar = function ( sk ) {
 	return container;
 
 };
-
-// var findKey = (value, compare = (a, b) => a === b) =>{
-// 	return Object.keys(obj).find(k => compare(obj[k], value))
-// }
-
-// function buildSwitchButtons(nameList, objectMap, currentObject, domContainer) {
-// 	for (let name of nameList) {
-// 		var bt = new UI.Button(name).setId(name).onClick(function(){
-// 			updateSwitchButtons(name, objectMap, currentObject, nameList);
-// 		});
-// 		if (name == currentObject.name) {
-// 			bt.dom.classList.add('selected');
-// 		}
-// 		domContainer.add(bt);
-// 	}
-// }
-
-// function updateSwitchButtons(clickName, objectMap, currentObject, nameList) {
-// 	if (currentObject.name == clickName) return;
-// 	console.log(currentObject.name +' to ' + clickName)
-// 	currentObject = objectMap[clickName];
-// 	console.log(currentObject)
-// 	// update UI
-// 	for (let name of nameList) {
-// 		let btDom = document.getElementById(name);
-// 		if (name == clickName) {
-// 			btDom.classList.add('selected');
-// 		} else {
-// 			btDom.classList.remove('selected');
-// 		}
-// 	}
-	
-// }

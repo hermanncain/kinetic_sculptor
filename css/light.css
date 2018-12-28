@@ -60,29 +60,23 @@ select {
 	position: absolute;
 	left: 0;
 	top: 0;
-	height:60px;
-	width: 80%;
+	height: 60px;
+	width: 100%;
 	background: #eee;
 	font-size: 20px;
+	border-bottom: solid 1px #333;
 }
 #topbar .Row {
 	display: inline;
 }
 #topbar .Button{
-	margin:5px;
+	margin: 5px;
 	height: 50px;
 	width: 50px;
 	background-repeat: no-repeat;
 	background-size: 80% 80%;
 	background-position: center;
 }
-/* #topbar button:hover {
-	border: solid 2px #000 !important;
-}
-
-#topbar button.selected {
-	border: solid 2px #000 !important;
-} */
 	#scene1 {
 		background-image: url(../cubemaps/scene1/nz.png);
 	}
@@ -99,14 +93,14 @@ select {
 		background-image: url(icons/glass.svg);
 	}
 	#custom {
-		background-image: url(icons/custom.svg);
+		background-image: url(icons/add.svg);
 	}
 
 #topbar #github {
 	float:right;
 	height: 40px;
 	width: 40px;
-	margin-right:20px;
+	margin-right:40px;
 	border-radius: 20px !important;
 	background-size: 100% 100% !important;
 	background-image: url(icons/github.svg);
@@ -114,7 +108,8 @@ select {
 #sidebar {
 	position: absolute;
 	right: 0;
-	top: 0;
+	bottom: 0;
+	height: calc(100% - 60px);
 	width: 20%;
 	background: #eee;
 	overflow: auto;
@@ -150,6 +145,14 @@ select {
 		background-size: 80% 80%;
 		background-position: center;
 	}
+	#sidebar .Number {
+		padding-left:10% !important;
+		width:40%;
+	}
+	#sidebar .Integer {
+		padding-left:10% !important;
+		width:40%;
+	}
 	
 	#circle {
 		background-image: url(icons/circle.svg);
@@ -162,6 +165,9 @@ select {
 	}
 	#heart {
 		background-image: url(icons/heart.svg);
+	}
+	#upload {
+		background-image: url(icons/upload.svg);
 	}
 
 #Outliner {
@@ -189,3 +195,34 @@ select {
 	#Outliner .option.active {
 		background-color: rgba(0,0,0,0.04);
 	}
+
+.Modal {
+	z-index:20;
+}
+#loadingdlg {
+	height: 10%;
+	width: 70%;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: rgba(3,3,3,0);
+}
+#barbox {
+	width:100%;
+	height:30px;
+	border: solid 2px #fff;
+	border-radius:15px;
+	color:#fff;
+	position: absolute;
+}
+#loadingbar {
+	top:5px;
+	height:20px;
+	left: 1%;
+	position: absolute;
+	background: #ffffff;
+	border-radius:10px;
+}

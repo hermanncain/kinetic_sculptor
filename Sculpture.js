@@ -37,20 +37,34 @@ function Sculpture (
     }
 
     // unit meshes
-    this.unitNames = ['default','10','N1','N3','N4'];
-    this.units = {}
+    this.unitNames = ['default','10','N1','N3','N4','upload'];
+    this.units = {};
+
+    var loadingBar = new LoadingModalDlg();
+	document.body.appendChild(loadingBar.dom);
     for (let name of this.unitNames) {
         if (name=='default') {
             this.units[name] = generateDefaultUnit(mats[0]);
             this.units[name].unitName = name;
             continue;
+        } else if (name=='upload') {
+            continue;
         }
         let scope = this;
         objLoader.load(name+'.obj',function(object) {
+            if (scope.unitNames.indexOf(name)==scope.unitNames.length-2) {
+                document.body.removeChild(loadingBar.dom);
+                loadingBar = null;
+            }
             object.name = 'unit';
             object.children[0].material = mats[0];
             scope.units[name] = object;
             scope.units[name].unitName = name;
+        },function ( xhr ) {
+			if (loadingBar) {
+                var barWidth = xhr.loaded / xhr.total* 100>12?xhr.loaded / xhr.total* 100-2 : 10;
+                loadingBar.bar.setWidth( barWidth + '%');    
+            }
         });
     }
 
@@ -65,7 +79,6 @@ function Sculpture (
     this.setAxis('circle');
     this.setUnit('default');
     this.unitMaterial = mats[0];
-    //this.setMaterial('standard');
     
     this.add(this.twist);
 
@@ -143,7 +156,6 @@ Sculpture.prototype = Object.assign(Object.create(THREE.Group.prototype), {
     },
 
     setUnit: function (name) {
-        //console.log(this.units[name])
         this.unit = this.units[name];
     },
 
