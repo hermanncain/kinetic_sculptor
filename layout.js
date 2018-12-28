@@ -61,8 +61,7 @@ function line(v,nx,ny,nz,dx,dy,dz) {
 				temp.translateX(dx*i);
 				temp.translateY(dy*j);
 				temp.translateZ(dz*k);
-                v.add(temp);
-                console.log(i,j,k)			
+                v.add(temp);		
 			}
 		}
 	}
@@ -104,7 +103,7 @@ function heart(v,n,s,lock) {
 		if(!lock) {
 			var deg = new THREE.Vector3().subVectors(temp.position,ctp).angleTo(dir);
 			var positive = new THREE.Vector3().crossVectors(dir,new THREE.Vector3().subVectors(temp.position,ctp)).z;
-			if(positive>0) temp.rotateZ(deg);
+			if(positive>0) temp.rotateZ(deg+Math.PI);
 			else temp.rotateZ(Math.PI-deg);
 		}
 		v.add(temp);

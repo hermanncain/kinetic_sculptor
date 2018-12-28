@@ -42,6 +42,7 @@ function Sculpture (
     for (let name of this.unitNames) {
         if (name=='default') {
             this.units[name] = generateDefaultUnit(mats[0]);
+            this.units[name].unitName = name;
             continue;
         }
         let scope = this;
@@ -49,6 +50,7 @@ function Sculpture (
             object.name = 'unit';
             object.children[0].material = mats[0];
             scope.units[name] = object;
+            scope.units[name].unitName = name;
         });
     }
 
@@ -57,7 +59,7 @@ function Sculpture (
         'circle': new Element('circle','20,70,z'),
         'line': new Element('line','1,10,1,0,10,0'),
         'spiral': new Element('spiral','40,40,1,15,5'),
-        'heart': new Element('heart','30,2'),
+        'heart': new Element('heart','30,2,0'),
     };
 
     this.setAxis('circle');
@@ -75,19 +77,69 @@ Sculpture.prototype = Object.assign(Object.create(THREE.Group.prototype), {
 
     constructor: Sculpture,
 
-    setMaterial: function (name) {
-        this.unit.traverse(function(object){
-            if(object.type=='Mesh') {
-                object.material = this.materials[name];
-            }
-        });
-    },
-
     setAxis: function (name, args) {
         this.axis = this.axes[name];
         if (args) {
             this.axis.val = args.join(',');
         }
+    },
+
+    // layout paramters
+    setTwist: function (deg) {
+        var args = this.twist.val.split(',');
+        args[1] = deg;
+        this.twist.val = args.join(',');
+    },
+    // axial number
+    setNumber: function (num) {
+        var args = this.axis.val.split(',');
+        switch (this.axis.key) {
+            case 'circle':
+            case 'spiral':
+            case 'heart':
+                args[0] = num;
+            break;
+            case 'line':
+                args[1] = num;
+            break;
+        }
+        this.axis.val = args.join(',');
+    },
+    // radical number
+    setCircle: function (num) {
+        var args = this.selfCircle.val.split(',');
+        args[0] = num;
+        this.selfCircle.val = args.join(',');
+    },
+
+    // axis parameters
+    setRadius: function (r) {
+        if(this.axis.key!='circle') return;
+        var args = this.axis.val.split(',');
+        args[1] = r;
+        this.axis.val = args.join(',');
+    },
+    setYNumber: function (n) {
+        if(this.axis.key!='line') return;
+        var args = this.axis.val.split(',');
+        args[4] = n;
+        this.axis.val = args.join(',');
+    },
+    setSpiral: function (r,dr,dt,p){
+        if(this.axis.key!='spiral') return;
+        var args = this.axis.val.split(',');
+        args[1] = r;
+        args[2] = dr;
+        args[3] = dt;
+        args[4] = p;
+        this.axis.val = args.join(',');
+    },
+    setHeart: function (s,r) {
+        if(this.axis.key!='heart') return;
+        var args = this.axis.val.split(',');
+        args[1] = s;
+        args[2] = r;
+        this.axis.val = args.join(',');
     },
 
     setUnit: function (name) {
@@ -108,35 +160,39 @@ Sculpture.prototype = Object.assign(Object.create(THREE.Group.prototype), {
         this.metaUnit.traverseAncestors(function(object){
             while(object.children.length!=1 && object.type!='Scene') {
                 object.remove(object.children[object.children.length-1]);
-                object.quaternion.set(0,0,0,1);
-                object.scale.set(1,1,1);
-                object.position.set(0,0,0);
             }
+            object.quaternion.set(0,0,0,1);
+            object.scale.set(1,1,1);
+            object.position.set(0,0,0);
         });
         this.unit.quaternion.set(0,0,0,1);
         this.unit.scale.set(1,1,1);
         this.unit.position.set(0,0,0);
-        this.metaUnit.remove(this.unit);
+        this.metaUnit.children = [];
     },
 
     setMaterial: function (name) {
         var scope = this;
-        this.unit.traverse(function(object){
-            if(object.type=='Mesh') {
-                scope.unitMaterial = scope.materials[name];
-                object.material = scope.materials[name];
-                if (name == 'glass') {
-                    if(!scope.materials[name].envMap) {
-                        scope.updateMatMap(sceneBackgroundLib['scene1'])
-                    }
-                    scope.materials[name].envMap.mapping = THREE.CubeRefractionMapping;
-                } else if (name == 'reflective') {
-                    if(!scope.materials[name].envMap) {
-                        scope.updateMatMap(sceneBackgroundLib['scene1'])
+        // set all units' materials
+        for (let uname in this.units) {
+            this.units[uname].traverse(function(object){
+                if(object.type=='Mesh') {
+                    scope.unitMaterial = scope.materials[name];
+                    object.material = scope.materials[name];
+                    if (name == 'glass') {
+                        if(!scope.materials[name].envMap) {
+                            scope.updateMatMap(sceneBackgroundLib['scene1'])
+                        }
+                        scope.materials[name].envMap.mapping = THREE.CubeRefractionMapping;
+                    } else if (name == 'reflective') {
+                        if(!scope.materials[name].envMap) {
+                            scope.updateMatMap(sceneBackgroundLib['scene1'])
+                        }
+                        scope.materials[name].envMap.mapping = 301;
                     }
                 }
-            }
-        });
+            });
+        }
         this.build();
     },
 

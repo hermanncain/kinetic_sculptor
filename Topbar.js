@@ -9,21 +9,15 @@ var TopBar = function (sk) {
     t1.dom.style.verticalAlign='baseline';
     sceneRow.add(t1);
     
-    var noneMat = new UI.Button().setId('none').onClick(function(){
-        updateSceneBackground('none');
-    });
-    sceneBackgroundButtons.push(noneMat);
-    sceneRow.add(noneMat);
-    var scene1Mat = new UI.Button().setId('scene1').onClick(function(){
-        updateSceneBackground('scene1');
-    });
-    sceneRow.add(scene1Mat);
-    sceneBackgroundButtons.push(scene1Mat);
-    var scene2Mat = new UI.Button().setId('scene2').onClick(function(){
-        updateSceneBackground('scene2');
-    });
-    sceneRow.add(scene2Mat);
-    sceneBackgroundButtons.push(scene2Mat);
+    (function (){
+        for (let name of sceneBackgroundNameList) {
+            var bt = new UI.Button().setId(name).onClick(function(){
+                updateSceneBackground(name);
+            });
+            sceneRow.add(bt);
+            sceneBackgroundButtons.push(bt);
+        }
+    })();
 
     // unit material
     var unitMatButtons = [];
@@ -47,15 +41,12 @@ var TopBar = function (sk) {
 		window.open('https://github.com/hermanncain/kinetic_sculptor');
     }));
     
-    //buildSwitchButtons(unitMatList,unitMatLib, currentUnitMat,unitMatRow);
-
     function updateSceneBackground(name) {
         if (scene.background.name == name) {
             return;
         } else {
             currentSceneBackground = sceneBackgroundLib[name];
             scene.background = currentSceneBackground;
-            console.log(scene.background.name)
             if (scene.background.name != 'none'){
                 sk.updateMatMap(scene.background);
             }

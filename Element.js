@@ -101,7 +101,6 @@ Element.prototype = Object.assign(Object.create(THREE.Object3D.prototype), {
 			else return str2num;
 			//return d.exec(i)?Number( i ):i;
 		} );
-		//console.log(args)
 			//if ( v1.indexOf(this.key) >=0 ){// v21: const wordlist of valence == 1
 
 				if( this.val == null ) return;
