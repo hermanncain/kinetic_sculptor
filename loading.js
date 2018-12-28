@@ -13,6 +13,9 @@ LoadingModalDlg = function ( ) {
 	loadingModal.bar.setId('loadingbar');
 	loadingModal.bar.setWidth('10%');
 	box.add(loadingModal.bar);
+
+	loadingModal.info = new UI.Text().setId('loadingInfo');
+	box.add(loadingModal.info);
 	    
 	return loadingModal;
 

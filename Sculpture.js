@@ -63,7 +63,8 @@ function Sculpture (
         },function ( xhr ) {
 			if (loadingBar) {
                 var barWidth = xhr.loaded / xhr.total* 100>12?xhr.loaded / xhr.total* 100-2 : 10;
-                loadingBar.bar.setWidth( barWidth + '%');    
+                loadingBar.bar.setWidth( barWidth + '%');
+                loadingBar.info.setValue('Loading unit \'' + name + '\' ...');
             }
         });
     }
