@@ -6,7 +6,7 @@ Demo: https://hermanncain.github.io/kinetic_sculptor/
 
 The most famous cycled kinetic sculpture is the cauldron of 2016 Brazil Olympic Games designed by [Anthony Howe](https://www.howeart.net/). I studied his works and made this simple tool to generate kinetic sculptures like/beyond them.
 
-This online tool is very simple that it contains only 4 types of axis and 5 types of unit. Yet you can obtain a lot variants by editing parameters provided. Besides, this tool supports custom texture <img src="css/icons/add.svg" width = "20" height = "20"/> and unit <img src="css/icons/upload.svg" width = "20" height = "20"/> . So just upload your preferred images as textures and `*.obj` files as units!
+This online tool is very simple that it contains only 4 types of axis and 5 types of unit. Yet you can obtain a lot of variants by editing parameters provided. Besides, this tool supports custom texture <img src="css/icons/add.svg" width = "20" height = "20"/> and unit <img src="css/icons/upload.svg" width = "20" height = "20"/> . So just upload your preferred images as textures and `*.obj` files as units!
 
 ## Upload your own mesh
 
