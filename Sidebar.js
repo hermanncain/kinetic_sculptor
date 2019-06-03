@@ -183,6 +183,12 @@ var Sidebar = function ( sk ) {
 
 	// update unit
 	function updateUnit(name) {
+		if (name == '10' || name == 'N4') {
+			innerNumberCtrl.setValue(1);
+		} else {
+			innerNumberCtrl.setValue(3);
+		}
+		updateInnerNumber();
 		if (sk.unit.unitName == name) {
 			if (sk.units['upload']==undefined) {
 				updateUnitUI();
